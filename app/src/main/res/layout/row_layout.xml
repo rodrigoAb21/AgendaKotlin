@@ -1,46 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:layout_editor_absoluteY="81dp">
 
     <TextView
         android:id="@+id/txt_titulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/txt_direccion"
+        android:layout_marginTop="5dp"
         android:text="Titulo del evento"
         android:textColor="#000"
+        android:layout_centerVertical="true"
         android:textSize="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:layout_editor_absoluteX="30dp"
+        tools:layout_editor_absoluteY="5dp" />
 
     <TextView
-        android:id="@+id/txt_horaInicio"
+        android:id="@+id/txt_direccion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="00:00"
-        app:layout_constraintStart_toStartOf="@+id/txt_titulo"
-        app:layout_constraintTop_toBottomOf="@+id/txt_titulo" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginBottom="10dp"
+        android:layout_centerVertical="true"
+        android:text="Lugar"
+        android:textSize="12dp"
+        tools:layout_editor_absoluteX="30dp"
+        tools:layout_editor_absoluteY="26dp" />
 
-    <TextView
-        android:id="@+id/txt_guion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="7dp"
-        android:text="-"
-        app:layout_constraintStart_toEndOf="@+id/txt_horaInicio"
-        app:layout_constraintTop_toBottomOf="@+id/txt_titulo" />
-
-    <TextView
-        android:id="@+id/txt_horaFin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:text="00:00"
-        app:layout_constraintStart_toEndOf="@+id/txt_guion"
-        app:layout_constraintTop_toBottomOf="@+id/txt_titulo" />
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

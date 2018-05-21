@@ -26,6 +26,7 @@ class AdaptadorEvento(internal var activity: Activity, internal var listaDeEvent
 
         rowView = inflater.inflate(R.layout.row_layout, null)
         rowView.txt_titulo.setText(evento.nombre)
+        rowView.txt_direccion.setText(evento.direccion)
 
         rowView.setOnClickListener {
             val intent = Intent(activity, formulario::class.java)
