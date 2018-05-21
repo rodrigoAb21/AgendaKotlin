@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_btn_update"
+        android:title="Agregar"
+        android:icon="@mipmap/ic_check_blanco"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/menu_btn_delete"
+        android:title="Agregar"
+        android:icon="@mipmap/ic_del_blanco"
+        app:showAsAction="always"
+        />
+</menu>
