@@ -12,6 +12,7 @@ import com.uagrm.rodrigoab.agendakotlin.Modelos.Evento
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
 
 
@@ -28,13 +29,17 @@ class MainActivity : AppCompatActivity() {
         calendario.setUseThreeLetterAbbreviation(true)
 
         val dateFormat = SimpleDateFormat("MMMM", Locale.getDefault())
+        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+
         txt_mes.setText(dateFormat.format(calendario.firstDayOfCurrentMonth).toUpperCase())
 
         db = DBHelper(this)
 
 
         btn_agregar.setOnClickListener {
-            iniciarActivity(this, formulario::class.java)
+            var hoy = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse("2018-05-27 00:00:00")
+            Toast.makeText(this, hoy.time.toString(), Toast.LENGTH_LONG).show()
+            // iniciarActivity(this, formulario::class.java)
         }
 
         actualizarDatos()
@@ -42,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         calendario.setListener(object : CompactCalendarView.CompactCalendarViewListener{
             override fun onDayClick(dateClicked: Date?) {
-                //
+                Toast.makeText(this@MainActivity, dateClicked.toString(), Toast.LENGTH_LONG).show()
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
