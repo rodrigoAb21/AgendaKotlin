@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
-    tools:context=".MainActivity"
     android:fillViewport="true"
+    tools:context=".MainActivity"
     tools:layout_editor_absoluteY="81dp">
 
     <android.support.constraint.ConstraintLayout
@@ -17,6 +17,7 @@
             android:id="@+id/linearLayout2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/list_eventos"
             app:layout_constraintEnd_toEndOf="parent"
@@ -35,7 +36,7 @@
             <com.github.sundeepk.compactcalendarview.CompactCalendarView
                 android:id="@+id/compactcalendar_view"
                 android:layout_width="match_parent"
-                android:layout_height="235dp"
+                android:layout_height="247dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 app:compactCalendarBackgroundColor="#ffffff"
@@ -44,7 +45,7 @@
                 app:compactCalendarMultiEventIndicatorColor="#fff"
                 app:compactCalendarTargetHeight="250dp"
                 app:compactCalendarTextColor="#000000"
-                app:compactCalendarTextSize="14sp"
+                app:compactCalendarTextSize="12sp"
                 tools:layout_editor_absoluteY="34dp" />
         </LinearLayout>
 
@@ -53,29 +54,29 @@
             android:layout_width="62dp"
             android:layout_height="142dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="230dp"
             android:clickable="true"
             android:divider="@android:color/transparent"
             android:dividerHeight="10.0sp"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
             app:srcCompat="@mipmap/ic_plus2" />
 
         <View
             android:id="@+id/view6"
             android:layout_width="0dp"
             android:layout_height="0.5dp"
-            android:layout_marginTop="26dp"
             android:background="@color/divider"
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btn_agregar" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
         <ListView
             android:id="@+id/list_eventos"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="2dp"
+            android:layout_marginBottom="1dp"
             android:choiceMode="singleChoice"
             android:dividerHeight="0.5dp"
             app:layout_constraintBottom_toBottomOf="parent"

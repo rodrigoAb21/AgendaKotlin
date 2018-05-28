@@ -24,7 +24,9 @@ class MainActivity : AppCompatActivity() {
     internal var listaEventos : List<Evento> = ArrayList<Evento>()
     var calendario : CompactCalendarView ?= null
     var formato_dia : SimpleDateFormat ?= null
+    var formato : SimpleDateFormat ?= null
     var diaSeleccionado : String ?= null
+    var diaSeleccionado2 : String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,11 +36,13 @@ class MainActivity : AppCompatActivity() {
         calendario!!.setUseThreeLetterAbbreviation(true)
         calendario!!.shouldSelectFirstDayOfMonthOnScroll(false)
 
+        formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         formato_dia =  SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
         diaSeleccionado = formato_dia!!.format(Date()).toString()
+        diaSeleccionado2 = formato!!.format(Date()).toString()
 
         val dateFormat = SimpleDateFormat("MMMM", Locale.getDefault())
-        val formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
         txt_mes.setText(dateFormat.format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
 
@@ -55,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             // Toast.makeText(this, hoy.toString(), Toast.LENGTH_LONG).show()
             val intent = Intent(this, formulario::class.java)
             intent.putExtra("id", -1)
-            intent.putExtra("inicio", formato.format(Date()).toString())
+            intent.putExtra("inicio", diaSeleccionado2!!)
             this.startActivity(intent)
         }
 
@@ -66,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             override fun onDayClick(dateClicked: Date?) {
                 listaEventos = db.eventosDia(formato_dia!!.format(dateClicked).toString())
                 diaSeleccionado = formato_dia!!.format(dateClicked).toString()
+                diaSeleccionado2 = formato!!.format(dateClicked).toString()
                 val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
                 list_eventos.adapter = adapter
             }
@@ -77,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                 val listaEventoMes = db!!.eventosMes(formato_mes.format(calendario!!.firstDayOfCurrentMonth))
                 calendario!!.removeAllEvents()
                 for (evento: Evento in listaEventoMes) {
-                    calendario!!.addEvent(Event(Color.RED, SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
+                    calendario!!.addEvent(Event(getColor(evento.color!!), SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
                 }
             }
         })
@@ -103,13 +108,32 @@ class MainActivity : AppCompatActivity() {
         val listaEventoMes = db!!.eventosMes(formato_mes.format(calendario!!.firstDayOfCurrentMonth))
 
         for (evento: Evento in listaEventoMes) {
-            calendario!!.addEvent(Event(Color.RED, SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
+            calendario!!.addEvent(Event(getColor(evento.color!!), SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
         }
 
         listaEventos = db.eventosDia(diaSeleccionado!!)
         val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
         list_eventos.adapter = adapter
 
+    }
+
+
+    private fun getColor(color : String) : Int{
+        when(color){
+            "Azul" -> {
+                return Color.BLUE
+            }
+            "Rojo" -> {
+                return Color.RED
+            }
+            "Verde" -> {
+                return Color.GREEN
+            }
+            "Amarillo" -> {
+                return Color.YELLOW
+            }
+        }
+        return Color.GRAY
     }
 
 
