@@ -2,10 +2,12 @@ package com.uagrm.rodrigoab.agendakotlin
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
+import com.github.sundeepk.compactcalendarview.domain.Event
 import com.uagrm.rodrigoab.agendakotlin.Adaptador.AdaptadorEvento
 import com.uagrm.rodrigoab.agendakotlin.DBHelper.DBHelper
 import com.uagrm.rodrigoab.agendakotlin.Modelos.Evento
@@ -20,24 +22,30 @@ class MainActivity : AppCompatActivity() {
 
     internal lateinit var db : DBHelper
     internal var listaEventos : List<Evento> = ArrayList<Evento>()
+    var calendario : CompactCalendarView ?= null
+    var formato_dia : SimpleDateFormat ?= null
+    var diaSeleccionado : String ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val calendario : CompactCalendarView = findViewById(R.id.compactcalendar_view) as CompactCalendarView
-        calendario.setUseThreeLetterAbbreviation(true)
-        calendario.shouldSelectFirstDayOfMonthOnScroll(false)
+        calendario = findViewById(R.id.compactcalendar_view) as CompactCalendarView
+        calendario!!.setUseThreeLetterAbbreviation(true)
+        calendario!!.shouldSelectFirstDayOfMonthOnScroll(false)
+
+        formato_dia =  SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        diaSeleccionado = formato_dia!!.format(Date()).toString()
 
         val dateFormat = SimpleDateFormat("MMMM", Locale.getDefault())
         val formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
-        txt_mes.setText(dateFormat.format(calendario.firstDayOfCurrentMonth).toUpperCase())
+        txt_mes.setText(dateFormat.format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
 
         db = DBHelper(this)
 
-        val formato_dia = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        listaEventos = db.eventosDia(formato_dia.format(Date()).toString())
+
+        listaEventos = db.eventosDia(formato_dia!!.format(Date()).toString())
         val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
         list_eventos.adapter = adapter
 
@@ -54,15 +62,23 @@ class MainActivity : AppCompatActivity() {
         actualizarDatos()
 
 
-        calendario.setListener(object : CompactCalendarView.CompactCalendarViewListener{
+        calendario!!.setListener(object : CompactCalendarView.CompactCalendarViewListener{
             override fun onDayClick(dateClicked: Date?) {
-                listaEventos = db.eventosDia(formato_dia.format(dateClicked).toString())
+                listaEventos = db.eventosDia(formato_dia!!.format(dateClicked).toString())
+                diaSeleccionado = formato_dia!!.format(dateClicked).toString()
                 val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
                 list_eventos.adapter = adapter
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-                txt_mes.setText(dateFormat.format(calendario.firstDayOfCurrentMonth).toUpperCase())
+                txt_mes.setText(dateFormat.format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
+
+                val formato_mes = SimpleDateFormat("MM-yyyy", Locale.getDefault())
+                val listaEventoMes = db!!.eventosMes(formato_mes.format(calendario!!.firstDayOfCurrentMonth))
+                calendario!!.removeAllEvents()
+                for (evento: Evento in listaEventoMes) {
+                    calendario!!.addEvent(Event(Color.RED, SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
+                }
             }
         })
 
@@ -78,10 +94,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
         db = DBHelper(this)
 
-        val formato_dia = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-        listaEventos = db.eventosDia(formato_dia.format(Date()).toString())
+        calendario!!.removeAllEvents()
+
+        val formato_mes = SimpleDateFormat("MM-yyyy", Locale.getDefault())
+        val listaEventoMes = db!!.eventosMes(formato_mes.format(calendario!!.firstDayOfCurrentMonth))
+
+        for (evento: Evento in listaEventoMes) {
+            calendario!!.addEvent(Event(Color.RED, SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
+        }
+
+        listaEventos = db.eventosDia(diaSeleccionado!!)
         val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
         list_eventos.adapter = adapter
 
