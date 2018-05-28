@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">AgendaKotlin</string>
     <string name="titulo">Titulo</string>
+    <string name="color">Color</string>
+    <string name="lugar">Lugar</string>
+    <string name="inicio">Inicio</string>
+    <string name="fin">Fin</string>
+    <string name="alarma">Alarma</string>
     <string name="descripcion">Descripcion</string>
-    <string name="direccion">Direccion</string>
 </resources>

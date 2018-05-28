@@ -14,13 +14,17 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         //Tabla
         private val TABLE_NAME = "evento"
         private val COL_ID = "id"
+        private val COL_COLOR = "color"
         private val COL_NOMBRE = "nombre"
-        private val COL_DIR = "direccion"
+        private val COL_LUGAR = "lugar"
+        private val COL_INICIO = "inicio"
+        private val COL_FIN = "fin"
+        private val COL_ALARMA = "alarma"
         private val COL_DESCRIP = "descripcion"
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
-        val CREATE_TABLE_QUERY : String = "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_NOMBRE TEXT NOT NULL, $COL_DIR TEXT NOT NULL, $COL_DESCRIP TEXT NOT NULL)"
+        val CREATE_TABLE_QUERY : String = "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_COLOR TEXT NOT NULL, $COL_NOMBRE TEXT NOT NULL, $COL_LUGAR TEXT NOT NULL, $COL_INICIO TEXT NOT NULL, $COL_FIN TEXT NOT NULL, $COL_ALARMA INTEGER NOT NULL, $COL_DESCRIP TEXT NOT NULL)"
         p0!!.execSQL(CREATE_TABLE_QUERY)
     }
 
@@ -34,29 +38,32 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     // CRUD de Eventos
     var db = this.writableDatabase
 
-    // Listar eventos
+    // Devuelve todos los eventos
     val all_eventos : List<Evento>
         get() {
             val lista_eventos = ArrayList<Evento>()
             val selectQuery = "SELECT * FROM $TABLE_NAME"
-            val cursor = db.rawQuery(selectQuery, null)
+            val cursor = db!!.rawQuery(selectQuery, null)
 
             if (cursor.moveToFirst()){
                 do {
                     val evento = Evento()
                     evento.id = cursor.getInt(cursor.getColumnIndex(COL_ID))
+                    evento.color = cursor.getString(cursor.getColumnIndex(COL_COLOR))
                     evento.nombre = cursor.getString(cursor.getColumnIndex(COL_NOMBRE))
-                    evento.direccion = cursor.getString(cursor.getColumnIndex(COL_DIR))
+                    evento.lugar = cursor.getString(cursor.getColumnIndex(COL_LUGAR))
+                    evento.inicio = cursor.getString(cursor.getColumnIndex(COL_INICIO))
+                    evento.fin = cursor.getString(cursor.getColumnIndex(COL_FIN))
+                    evento.alarma = cursor.getInt(cursor.getColumnIndex(COL_ALARMA))
                     evento.descripcion = cursor.getString(cursor.getColumnIndex(COL_DESCRIP))
 
                     lista_eventos.add(evento)
                 }while (cursor.moveToNext())
             }
-            db.close()
             return lista_eventos
         }
 
-
+    // No es necesario que devuelva un valor, pero esta solo para la verificacion.
     fun agregarEvento(values : ContentValues) : Long{
         return db!!.insert(TABLE_NAME, null, values)
     }
@@ -67,6 +74,52 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
     fun actualizarEvento(values : ContentValues) : Int{
         return db!!.update(TABLE_NAME, values, "$COL_ID =?", arrayOf(values.get("id").toString()))
+    }
+
+    fun eventosDia(diaMesAno : String) : ArrayList<Evento>{
+        val eventos_dia = ArrayList<Evento>()
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $COL_INICIO LIKE $diaMesAno" + "%"
+        val cursor = db!!.rawQuery(selectQuery, null)
+
+        if (cursor.moveToFirst()){
+            do {
+                val evento = Evento()
+                evento.id = cursor.getInt(cursor.getColumnIndex(COL_ID))
+                evento.color = cursor.getString(cursor.getColumnIndex(COL_COLOR))
+                evento.nombre = cursor.getString(cursor.getColumnIndex(COL_NOMBRE))
+                evento.lugar = cursor.getString(cursor.getColumnIndex(COL_LUGAR))
+                evento.inicio = cursor.getString(cursor.getColumnIndex(COL_INICIO))
+                evento.fin = cursor.getString(cursor.getColumnIndex(COL_FIN))
+                evento.alarma = cursor.getInt(cursor.getColumnIndex(COL_ALARMA))
+                evento.descripcion = cursor.getString(cursor.getColumnIndex(COL_DESCRIP))
+
+                eventos_dia.add(evento)
+            }while (cursor.moveToNext())
+        }
+        return eventos_dia
+    }
+
+    fun eventosMes(mesAno : String) : ArrayList<Evento>{
+        val eventos_mes = ArrayList<Evento>()
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $COL_INICIO LIKE %" + mesAno +"%"
+        val cursor = db!!.rawQuery(selectQuery, null)
+
+        if (cursor.moveToFirst()){
+            do {
+                val evento = Evento()
+                evento.id = cursor.getInt(cursor.getColumnIndex(COL_ID))
+                evento.color = cursor.getString(cursor.getColumnIndex(COL_COLOR))
+                evento.nombre = cursor.getString(cursor.getColumnIndex(COL_NOMBRE))
+                evento.lugar = cursor.getString(cursor.getColumnIndex(COL_LUGAR))
+                evento.inicio = cursor.getString(cursor.getColumnIndex(COL_INICIO))
+                evento.fin = cursor.getString(cursor.getColumnIndex(COL_FIN))
+                evento.alarma = cursor.getInt(cursor.getColumnIndex(COL_ALARMA))
+                evento.descripcion = cursor.getString(cursor.getColumnIndex(COL_DESCRIP))
+
+                eventos_mes.add(evento)
+            }while (cursor.moveToNext())
+        }
+        return eventos_mes
     }
 
 

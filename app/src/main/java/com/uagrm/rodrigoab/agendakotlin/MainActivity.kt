@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         calendario.setUseThreeLetterAbbreviation(true)
 
         val dateFormat = SimpleDateFormat("MMMM", Locale.getDefault())
-        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
         txt_mes.setText(dateFormat.format(calendario.firstDayOfCurrentMonth).toUpperCase())
 
@@ -37,9 +37,12 @@ class MainActivity : AppCompatActivity() {
 
 
         btn_agregar.setOnClickListener {
-            var hoy = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse("2018-05-27 00:00:00")
-            Toast.makeText(this, hoy.time.toString(), Toast.LENGTH_LONG).show()
-            // iniciarActivity(this, formulario::class.java)
+            // var hoy = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse("29-05-2018 00:00:00")
+            // Toast.makeText(this, hoy.toString(), Toast.LENGTH_LONG).show()
+            val intent = Intent(this, formulario::class.java)
+            intent.putExtra("id", -1)
+            intent.putExtra("inicio", formato.format(Date()).toString())
+            this.startActivity(intent)
         }
 
         actualizarDatos()
@@ -47,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         calendario.setListener(object : CompactCalendarView.CompactCalendarViewListener{
             override fun onDayClick(dateClicked: Date?) {
-                Toast.makeText(this@MainActivity, dateClicked.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MainActivity, formato.format(dateClicked).toString(), Toast.LENGTH_LONG).show()
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
@@ -63,13 +66,6 @@ class MainActivity : AppCompatActivity() {
         val adapter = AdaptadorEvento(this, listaEventos)
         list_eventos.adapter = adapter
     }
-
-    private fun iniciarActivity(activity : Activity, nextActivity: Class<*>){
-        val intent = Intent(activity, nextActivity)
-        intent.putExtra("id", -1)
-        activity.startActivity(intent)
-    }
-
 
 
     override fun onResume() {
