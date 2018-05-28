@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         val calendario : CompactCalendarView = findViewById(R.id.compactcalendar_view) as CompactCalendarView
         calendario.setUseThreeLetterAbbreviation(true)
+        calendario.shouldSelectFirstDayOfMonthOnScroll(false)
 
         val dateFormat = SimpleDateFormat("MMMM", Locale.getDefault())
         val formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
@@ -34,6 +35,11 @@ class MainActivity : AppCompatActivity() {
         txt_mes.setText(dateFormat.format(calendario.firstDayOfCurrentMonth).toUpperCase())
 
         db = DBHelper(this)
+
+        val formato_dia = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        listaEventos = db.eventosDia(formato_dia.format(Date()).toString())
+        val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
+        list_eventos.adapter = adapter
 
 
         btn_agregar.setOnClickListener {
@@ -50,7 +56,9 @@ class MainActivity : AppCompatActivity() {
 
         calendario.setListener(object : CompactCalendarView.CompactCalendarViewListener{
             override fun onDayClick(dateClicked: Date?) {
-                Toast.makeText(this@MainActivity, formato.format(dateClicked).toString(), Toast.LENGTH_LONG).show()
+                listaEventos = db.eventosDia(formato_dia.format(dateClicked).toString())
+                val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
+                list_eventos.adapter = adapter
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
@@ -71,7 +79,12 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         db = DBHelper(this)
-        actualizarDatos()
+
+        val formato_dia = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        listaEventos = db.eventosDia(formato_dia.format(Date()).toString())
+        val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
+        list_eventos.adapter = adapter
+
     }
 
 
