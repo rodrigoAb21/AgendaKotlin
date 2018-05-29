@@ -25,6 +25,7 @@ class formulario : AppCompatActivity() {
         bundle = intent.extras
         if ( bundle!!.getInt("id") > 0){
             edt_nombre.setText(bundle!!.getString("nombre"))
+            selector_color.setSelection(getPosicion(bundle!!.getString("color")))
             edt_lugar.setText(bundle!!.getString("lugar"))
             edt_inicio.setText(bundle!!.getString("inicio"))
             edt_fin.setText(bundle!!.getString("fin"))
@@ -35,6 +36,16 @@ class formulario : AppCompatActivity() {
             edt_fin.setText(bundle!!.getString("inicio"))
         }
 
+    }
+
+    private fun getPosicion(color : String): Int{
+        when(color) {
+            "Azul"-> return 0
+            "Rojo"-> return 1
+            "Verde"-> return 2
+            "Amarillo"-> return 3
+        }
+        return 4
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

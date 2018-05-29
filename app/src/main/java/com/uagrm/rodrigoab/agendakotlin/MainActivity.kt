@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                 calendario!!.removeAllEvents()
                 for (evento: Evento in listaEventoMes) {
                     calendario!!.addEvent(Event(getColor(evento.color!!), SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
+                    
                 }
             }
         })
