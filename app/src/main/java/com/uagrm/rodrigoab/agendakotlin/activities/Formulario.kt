@@ -1,7 +1,12 @@
 package com.uagrm.rodrigoab.agendakotlin.activities
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.ContentValues
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -10,8 +15,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.uagrm.rodrigoab.agendakotlin.R
+import com.uagrm.rodrigoab.agendakotlin.helpers.AlarmNotificationReceiver
 import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
 import kotlinx.android.synthetic.main.activity_formulario.*
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -119,7 +126,22 @@ class Formulario : AppCompatActivity() {
                     valores.put("alarma", edt_alarma.text.toString())
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
-                    if (dbHelper!!.agregarEvento(valores) > 0) {
+                    val id = dbHelper!!.agregarEvento(valores)
+                    if (id > 0) {
+
+                        var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+
+                        myIntent.putExtra("id",id)
+                        myIntent.setData(Uri.parse("myalarms://"+ id))
+                        myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
+                        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                        var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
+                        var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+                        var fechaHora = df.parse(edt_inicio.text.toString())
+                        manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
+
+
                         finish()
                     } else {
                         Toast.makeText(this, "No se pudo agregar el evento", Toast.LENGTH_LONG).show()
@@ -133,8 +155,9 @@ class Formulario : AppCompatActivity() {
 
             R.id.menu_btn_update -> {
                 if (edt_nombre.text.toString().trim() != ""){
+                    val id = bundle!!.getInt("id").toString()
                     val valores = ContentValues()
-                    valores.put("id", bundle!!.getInt("id").toString())
+                    valores.put("id", id)
                     valores.put("nombre", edt_nombre.text.toString().trim())
                     valores.put("color", selector_color.selectedItem.toString())
                     valores.put("lugar", edt_lugar.text.toString().trim())
@@ -144,6 +167,29 @@ class Formulario : AppCompatActivity() {
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
                     if (dbHelper!!.actualizarEvento(valores) > 0) {
+
+                        var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+                        myIntent.putExtra("id",id)
+                        myIntent.setData(Uri.parse("myalarms://"+ id))
+                        myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
+                        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+
+                        var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
+                        var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                        manager.cancel(pendingIntent)
+
+                        myIntent.putExtra("id",id)
+                        myIntent.setData(Uri.parse("myalarms://"+ id))
+                        myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
+                        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+
+
+                        val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+                        var fechaHora = df.parse(edt_inicio.text.toString())
+
+                        manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
+
+
                         finish()
                     } else {
                         Toast.makeText(this, "No se pudo editar el evento", Toast.LENGTH_LONG).show()
@@ -156,10 +202,23 @@ class Formulario : AppCompatActivity() {
             }
 
             R.id.menu_btn_delete -> {
+                val id = bundle!!.getInt("id")
                 var alertDialog = AlertDialog.Builder(this)
                 alertDialog.setMessage("Quieres eliminar el evento?")
                 alertDialog.setPositiveButton("Eliminar", { dialogInterface: DialogInterface, i: Int ->
-                    dbHelper!!.eliminarEvento(bundle!!.getInt("id").toString())
+
+                    var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+                    myIntent.putExtra("id",id)
+                    myIntent.setData(Uri.parse("myalarms://"+ id))
+                    myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
+                    myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+
+                    var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
+                    var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    manager.cancel(pendingIntent)
+
+
+                    dbHelper!!.eliminarEvento(id.toString())
                     finish()
                 })
                 alertDialog.setNegativeButton("Cancelar", { dialogInterface: DialogInterface, i: Int -> })
