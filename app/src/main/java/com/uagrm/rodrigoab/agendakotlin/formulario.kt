@@ -28,6 +28,7 @@ class formulario : AppCompatActivity() {
 
         bundle = intent.extras
         if ( bundle!!.getInt("id") > 0){
+
             edt_nombre.setText(bundle!!.getString("nombre"))
             selector_color.setSelection(getPosicion(bundle!!.getString("color")))
             edt_lugar.setText(bundle!!.getString("lugar"))
@@ -35,6 +36,7 @@ class formulario : AppCompatActivity() {
             edt_fin.setText(bundle!!.getString("fin"))
             edt_alarma.setText(bundle!!.getInt("alarma").toString())
             edt_descripcion.setText(bundle!!.getString("descripcion"))
+
         } else {
             edt_inicio.setText(bundle!!.getString("inicio"))
             edt_fin.setText(bundle!!.getString("inicio"))
@@ -64,6 +66,7 @@ class formulario : AppCompatActivity() {
             val datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
             val timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
 
+            datePicker2.firstDayOfWeek = Calendar.MONDAY
             timePicker2.setIs24HourView(true)
 
 
@@ -105,39 +108,50 @@ class formulario : AppCompatActivity() {
 
         when (item!!.itemId) {
             R.id.menu_btn_add -> {
-                val valores = ContentValues()
-                valores.put("nombre", edt_nombre.text.toString())
-                valores.put("color", selector_color.selectedItem.toString())
-                valores.put("lugar", edt_lugar.text.toString())
-                valores.put("inicio", edt_inicio.text.toString())
-                valores.put("fin", edt_fin.text.toString())
-                valores.put("alarma", edt_alarma.text.toString())
-                valores.put("descripcion", edt_descripcion.text.toString())
+                if(edt_nombre.text.toString().trim() != ""){
+                    val valores = ContentValues()
+                    valores.put("nombre", edt_nombre.text.toString().trim())
+                    valores.put("color", selector_color.selectedItem.toString())
+                    valores.put("lugar", edt_lugar.text.toString().trim())
+                    valores.put("inicio", edt_inicio.text.toString())
+                    valores.put("fin", edt_fin.text.toString())
+                    valores.put("alarma", edt_alarma.text.toString())
+                    valores.put("descripcion", edt_descripcion.text.toString().trim())
 
-                if (dbHelper!!.agregarEvento(valores) > 0) {
-                    finish()
+                    if (dbHelper!!.agregarEvento(valores) > 0) {
+                        finish()
+                    } else {
+                        Toast.makeText(this, "No se pudo agregar el evento", Toast.LENGTH_LONG).show()
+                    }
                 } else {
-                    Toast.makeText(this, "No se pudo agregar el evento", Toast.LENGTH_LONG).show()
+                    edt_nombre.setText("")
+                    Toast.makeText(this, "El campo nombre es obligatorio.", Toast.LENGTH_SHORT).show()
                 }
 
             }
 
             R.id.menu_btn_update -> {
-                val valores = ContentValues()
-                valores.put("id", bundle!!.getInt("id").toString())
-                valores.put("nombre", edt_nombre.text.toString())
-                valores.put("color", selector_color.selectedItem.toString())
-                valores.put("lugar", edt_lugar.text.toString())
-                valores.put("inicio", edt_inicio.text.toString())
-                valores.put("fin", edt_fin.text.toString())
-                valores.put("alarma", edt_alarma.text.toString())
-                valores.put("descripcion", edt_descripcion.text.toString())
+                if (edt_nombre.text.toString().trim() != ""){
+                    val valores = ContentValues()
+                    valores.put("id", bundle!!.getInt("id").toString())
+                    valores.put("nombre", edt_nombre.text.toString().trim())
+                    valores.put("color", selector_color.selectedItem.toString())
+                    valores.put("lugar", edt_lugar.text.toString().trim())
+                    valores.put("inicio", edt_inicio.text.toString())
+                    valores.put("fin", edt_fin.text.toString())
+                    valores.put("alarma", edt_alarma.text.toString())
+                    valores.put("descripcion", edt_descripcion.text.toString().trim())
 
-                if (dbHelper!!.actualizarEvento(valores) > 0) {
-                    finish()
+                    if (dbHelper!!.actualizarEvento(valores) > 0) {
+                        finish()
+                    } else {
+                        Toast.makeText(this, "No se pudo editar el evento", Toast.LENGTH_LONG).show()
+                    }
                 } else {
-                    Toast.makeText(this, "No se pudo editar el evento", Toast.LENGTH_LONG).show()
+                    edt_nombre.setText("")
+                    Toast.makeText(this, "El campo nombre es obligatorio.", Toast.LENGTH_SHORT).show()
                 }
+
             }
 
             R.id.menu_btn_delete -> {
