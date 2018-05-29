@@ -1,4 +1,4 @@
-package com.uagrm.rodrigoab.agendakotlin.Modelos
+package com.uagrm.rodrigoab.agendakotlin.models
 
 class Evento {
     var id : Int ?= null

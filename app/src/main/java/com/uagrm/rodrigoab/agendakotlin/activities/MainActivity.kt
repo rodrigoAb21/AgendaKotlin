@@ -1,22 +1,18 @@
-package com.uagrm.rodrigoab.agendakotlin
+package com.uagrm.rodrigoab.agendakotlin.activities
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.widget.*
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
-import com.uagrm.rodrigoab.agendakotlin.Adaptador.AdaptadorEvento
-import com.uagrm.rodrigoab.agendakotlin.DBHelper.DBHelper
-import com.uagrm.rodrigoab.agendakotlin.Modelos.Evento
+import com.uagrm.rodrigoab.agendakotlin.R
+import com.uagrm.rodrigoab.agendakotlin.adapters.AdaptadorEvento
+import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
+import com.uagrm.rodrigoab.agendakotlin.models.Evento
 
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.*
 
 
@@ -57,32 +53,8 @@ class MainActivity : AppCompatActivity() {
 
 
         btn_agregar.setOnClickListener {
-            /*
-            var alertView = AlertDialog.Builder(this)
-            var vistaAlertDialog = View.inflate(this, R.layout.date_time_picker, null)
 
-            alertView.setView(vistaAlertDialog)
-            val dialogo = alertView.show()
-
-
-            val datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
-            val timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
-
-            timePicker2.setIs24HourView(true)
-
-
-            vistaAlertDialog.findViewById<Button>(R.id.btn_dateTime).setOnClickListener {
-                var fecha = GregorianCalendar(datePicker2.year, datePicker2.month, datePicker2.dayOfMonth, timePicker2.hour, timePicker2.minute, 0)
-                var cadena = formato!!.format(fecha.time).toString()
-
-                Toast.makeText(this@MainActivity, cadena, Toast.LENGTH_LONG).show()
-                dialogo.dismiss()
-
-            }
-            */
-
-
-            val intent = Intent(this, formulario::class.java)
+            val intent = Intent(this, Formulario::class.java)
             intent.putExtra("id", -1)
             intent.putExtra("inicio", diaSeleccionado2!!)
             this.startActivity(intent)

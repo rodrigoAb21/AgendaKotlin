@@ -1,4 +1,4 @@
-package com.uagrm.rodrigoab.agendakotlin
+package com.uagrm.rodrigoab.agendakotlin.activities
 
 import android.content.ContentValues
 import android.content.DialogInterface
@@ -9,12 +9,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import com.uagrm.rodrigoab.agendakotlin.DBHelper.DBHelper
+import com.uagrm.rodrigoab.agendakotlin.R
+import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
 import kotlinx.android.synthetic.main.activity_formulario.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class formulario : AppCompatActivity() {
+class Formulario : AppCompatActivity() {
 
     var bundle : Bundle ?= null
     var formato : SimpleDateFormat ?= null

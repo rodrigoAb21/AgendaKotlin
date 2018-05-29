@@ -1,4 +1,4 @@
-package com.uagrm.rodrigoab.agendakotlin.Adaptador
+package com.uagrm.rodrigoab.agendakotlin.adapters
 
 import android.app.Activity
 import android.content.Context
@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import com.uagrm.rodrigoab.agendakotlin.Modelos.Evento
+import com.uagrm.rodrigoab.agendakotlin.models.Evento
 import com.uagrm.rodrigoab.agendakotlin.R
-import com.uagrm.rodrigoab.agendakotlin.formulario
+import com.uagrm.rodrigoab.agendakotlin.activities.Formulario
 import kotlinx.android.synthetic.main.row_layout.view.*
 
 class AdaptadorEvento(internal var activity: Activity, internal var listaDeEventos: List<Evento>) :BaseAdapter() {
@@ -29,7 +29,7 @@ class AdaptadorEvento(internal var activity: Activity, internal var listaDeEvent
         rowView.txt_direccion.setText(evento.lugar)
 
         rowView.setOnClickListener {
-            val intent = Intent(activity, formulario::class.java)
+            val intent = Intent(activity, Formulario::class.java)
             intent.putExtra("id", evento.id)
             intent.putExtra("color", evento.color)
             intent.putExtra("nombre", evento.nombre)
