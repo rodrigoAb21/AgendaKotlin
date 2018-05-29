@@ -122,16 +122,16 @@ class MainActivity : AppCompatActivity() {
     private fun getColor(color : String) : Int{
         when(color){
             "Azul" -> {
-                return Color.BLUE
+                return Color.rgb(24, 93, 133)
             }
             "Rojo" -> {
-                return Color.RED
+                return Color.rgb(199, 0, 57)
             }
             "Verde" -> {
-                return Color.GREEN
+                return Color.rgb(0, 128, 0)
             }
             "Amarillo" -> {
-                return Color.YELLOW
+                return Color.rgb(255, 193, 7)
             }
         }
         return Color.GRAY
