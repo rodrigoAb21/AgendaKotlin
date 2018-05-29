@@ -8,10 +8,11 @@ import com.uagrm.rodrigoab.agendakotlin.models.Evento
 
 class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VER) {
     companion object {
+        // DB
         private val DATABASE_NAME = "CALENDARIO.db"
         private val DATABASE_VER = 1
 
-        //Tabla
+        // Tabla
         private val TABLE_NAME = "evento"
         private val COL_ID = "id"
         private val COL_COLOR = "color"
@@ -35,7 +36,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
 
 
-    // CRUD de Eventos
+    // ---------------------------------- CRUD de Eventos ------------------------------------------
     var db = this.writableDatabase
 
     // Devuelve todos los eventos
