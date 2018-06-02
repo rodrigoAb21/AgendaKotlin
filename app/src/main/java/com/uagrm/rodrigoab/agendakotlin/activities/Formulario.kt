@@ -172,7 +172,7 @@ class Formulario : AppCompatActivity() {
                     valores.put("lugar", edt_lugar.text.toString().trim())
                     valores.put("inicio", edt_inicio.text.toString())
                     valores.put("fin", edt_fin.text.toString())
-                    valores.put("alarma", getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
+                    valores.put("alarma", selector_alarma.selectedItem.toString())
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
                     val id = dbHelper!!.agregarEvento(valores)
@@ -213,7 +213,7 @@ class Formulario : AppCompatActivity() {
                     valores.put("lugar", edt_lugar.text.toString().trim())
                     valores.put("inicio", edt_inicio.text.toString())
                     valores.put("fin", edt_fin.text.toString())
-                    valores.put("alarma", getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
+                    valores.put("alarma", selector_alarma.selectedItem.toString())
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
                     if (dbHelper!!.actualizarEvento(valores) > 0) {
