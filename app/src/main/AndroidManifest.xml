@@ -16,10 +16,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".helpers.AlarmNotificationReceiver"/>
-        <activity android:name=".activities.Formulario"
-            android:parentActivityName=".activities.MainActivity" >
-        </activity>
+
+        <receiver android:name=".helpers.AlarmNotificationReceiver" />
+
+        <activity
+            android:name=".activities.Formulario"
+            android:parentActivityName=".activities.MainActivity"></activity>
+        <activity
+            android:name=".activities.VistaAnual"
+            android:parentActivityName=".activities.MainActivity"></activity>
     </application>
 
 </manifest>
