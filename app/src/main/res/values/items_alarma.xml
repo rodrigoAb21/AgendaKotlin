@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="items_alarma">
+        <item>Sin alarma</item>
+        <item>10 min antes</item>
+        <item>30 min antes</item>
+        <item>1 hora antes</item>
+        <item>1 dia antes</item>
+    </string-array>
+</resources>

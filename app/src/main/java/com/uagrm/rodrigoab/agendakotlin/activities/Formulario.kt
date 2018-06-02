@@ -30,8 +30,10 @@ class Formulario : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_formulario)
-        var selectorAdapter = ArrayAdapter.createFromResource(this, R.array.items_colores, android.R.layout.simple_spinner_dropdown_item)
+        val selectorAdapter = ArrayAdapter.createFromResource(this, R.array.items_colores, android.R.layout.simple_spinner_dropdown_item)
+        val selectorAlarmaAdapter = ArrayAdapter.createFromResource(this, R.array.items_alarma, android.R.layout.simple_spinner_dropdown_item)
         selector_color.adapter = selectorAdapter
+        selector_alarma.adapter = selectorAlarmaAdapter
         formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
         bundle = intent.extras
@@ -42,7 +44,7 @@ class Formulario : AppCompatActivity() {
             edt_lugar.setText(bundle!!.getString("lugar"))
             edt_inicio.setText(bundle!!.getString("inicio"))
             edt_fin.setText(bundle!!.getString("fin"))
-            edt_alarma.setText(bundle!!.getInt("alarma").toString())
+            selector_alarma.setSelection(getPosicionAlarma(bundle!!.getString("alarma")))
             edt_descripcion.setText(bundle!!.getString("descripcion"))
 
         } else {
@@ -60,6 +62,9 @@ class Formulario : AppCompatActivity() {
 
 
     }
+
+
+
 
 
     private fun selectorFecha(textView: TextView){
@@ -83,9 +88,41 @@ class Formulario : AppCompatActivity() {
                 var cadena = formato!!.format(fecha.time).toString()
 
                 textView.text = cadena
+
+                if(formato!!.parse(edt_fin.text.toString()).time < formato!!.parse(edt_inicio.text.toString()).time){
+                    edt_fin.setText(edt_inicio.text.toString())
+                }
+
                 dialogo.dismiss()
 
             }
+
+    }
+
+
+    private fun getAlarma(inicio : String, alarma : String) : String{
+        var fecha = Calendar.getInstance(TimeZone.getDefault() ,Locale.getDefault())
+        fecha.time = formato!!.parse(inicio)
+        when(alarma){
+            "10 min antes" -> {
+                fecha.add(Calendar.MINUTE, -10)
+                return formato!!.format(fecha.time).toString()
+            }
+            "30 min antes" -> {
+                fecha.add(Calendar.MINUTE, -30)
+                return formato!!.format(fecha.time).toString()
+            }
+            "1 hora antes" -> {
+                fecha.add(Calendar.HOUR, -1)
+                return formato!!.format(fecha.time).toString()
+            }
+            "1 dia antes" -> {
+                fecha.add(Calendar.DAY_OF_MONTH, -1)
+                return formato!!.format(fecha.time).toString()
+            }
+        }
+
+        return "Sin alarma"
 
     }
 
@@ -99,6 +136,17 @@ class Formulario : AppCompatActivity() {
         }
         return 4
     }
+
+    private fun getPosicionAlarma(alarma : String): Int{
+        when(alarma) {
+            "Sin alarma"-> return 0
+            "10 min antes"-> return 1
+            "30 min antes"-> return 2
+            "1 hora antes"-> return 3
+        }
+        return 4
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
@@ -116,6 +164,7 @@ class Formulario : AppCompatActivity() {
 
         when (item!!.itemId) {
             R.id.menu_btn_add -> {
+
                 if(edt_nombre.text.toString().trim() != ""){
                     val valores = ContentValues()
                     valores.put("nombre", edt_nombre.text.toString().trim())
@@ -123,7 +172,7 @@ class Formulario : AppCompatActivity() {
                     valores.put("lugar", edt_lugar.text.toString().trim())
                     valores.put("inicio", edt_inicio.text.toString())
                     valores.put("fin", edt_fin.text.toString())
-                    valores.put("alarma", edt_alarma.text.toString())
+                    valores.put("alarma", getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
                     val id = dbHelper!!.agregarEvento(valores)
@@ -138,7 +187,7 @@ class Formulario : AppCompatActivity() {
                         var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
                         var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                         val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-                        var fechaHora = df.parse(edt_inicio.text.toString())
+                        var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                         manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
 
 
@@ -150,6 +199,7 @@ class Formulario : AppCompatActivity() {
                     edt_nombre.setText("")
                     Toast.makeText(this, "El campo nombre es obligatorio.", Toast.LENGTH_SHORT).show()
                 }
+
 
             }
 
@@ -163,7 +213,7 @@ class Formulario : AppCompatActivity() {
                     valores.put("lugar", edt_lugar.text.toString().trim())
                     valores.put("inicio", edt_inicio.text.toString())
                     valores.put("fin", edt_fin.text.toString())
-                    valores.put("alarma", edt_alarma.text.toString())
+                    valores.put("alarma", getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
                     if (dbHelper!!.actualizarEvento(valores) > 0) {
@@ -185,7 +235,7 @@ class Formulario : AppCompatActivity() {
 
 
                         val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-                        var fechaHora = df.parse(edt_inicio.text.toString())
+                        var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
 
                         manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
 

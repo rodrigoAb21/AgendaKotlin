@@ -25,7 +25,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
-        val CREATE_TABLE_QUERY : String = "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_COLOR TEXT NOT NULL, $COL_NOMBRE TEXT NOT NULL, $COL_LUGAR TEXT NOT NULL, $COL_INICIO TEXT NOT NULL, $COL_FIN TEXT NOT NULL, $COL_ALARMA INTEGER NOT NULL, $COL_DESCRIP TEXT NOT NULL)"
+        val CREATE_TABLE_QUERY : String = "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_COLOR TEXT NOT NULL, $COL_NOMBRE TEXT NOT NULL, $COL_LUGAR TEXT NOT NULL, $COL_INICIO TEXT NOT NULL, $COL_FIN TEXT NOT NULL, $COL_ALARMA TEXT NOT NULL, $COL_DESCRIP TEXT NOT NULL)"
 
         p0!!.execSQL(CREATE_TABLE_QUERY)
     }
@@ -56,7 +56,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                     evento.lugar = cursor.getString(cursor.getColumnIndex(COL_LUGAR))
                     evento.inicio = cursor.getString(cursor.getColumnIndex(COL_INICIO))
                     evento.fin = cursor.getString(cursor.getColumnIndex(COL_FIN))
-                    evento.alarma = cursor.getInt(cursor.getColumnIndex(COL_ALARMA))
+                    evento.alarma = cursor.getString(cursor.getColumnIndex(COL_ALARMA))
                     evento.descripcion = cursor.getString(cursor.getColumnIndex(COL_DESCRIP))
 
                     lista_eventos.add(evento)
@@ -92,7 +92,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 evento.lugar = cursor.getString(cursor.getColumnIndex(COL_LUGAR))
                 evento.inicio = cursor.getString(cursor.getColumnIndex(COL_INICIO))
                 evento.fin = cursor.getString(cursor.getColumnIndex(COL_FIN))
-                evento.alarma = cursor.getInt(cursor.getColumnIndex(COL_ALARMA))
+                evento.alarma = cursor.getString(cursor.getColumnIndex(COL_ALARMA))
                 evento.descripcion = cursor.getString(cursor.getColumnIndex(COL_DESCRIP))
 
                 eventos_dia.add(evento)
@@ -115,7 +115,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
                 evento.lugar = cursor.getString(cursor.getColumnIndex(COL_LUGAR))
                 evento.inicio = cursor.getString(cursor.getColumnIndex(COL_INICIO))
                 evento.fin = cursor.getString(cursor.getColumnIndex(COL_FIN))
-                evento.alarma = cursor.getInt(cursor.getColumnIndex(COL_ALARMA))
+                evento.alarma = cursor.getString(cursor.getColumnIndex(COL_ALARMA))
                 evento.descripcion = cursor.getString(cursor.getColumnIndex(COL_DESCRIP))
 
                 eventos_mes.add(evento)

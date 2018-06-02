@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupCalendar(){
         calendario!!.setUseThreeLetterAbbreviation(true)
         calendario!!.shouldSelectFirstDayOfMonthOnScroll(false)
+        calendario!!.shouldDrawIndicatorsBelowSelectedDays(true)
 
         formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         formato_dia =  SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
