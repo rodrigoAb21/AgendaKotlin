@@ -76,11 +76,18 @@ class Formulario : AppCompatActivity() {
             val dialogo = alertView.show()
 
 
-            val datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
-            val timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
+            var datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
+            var timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
 
             datePicker2.firstDayOfWeek = Calendar.MONDAY
             timePicker2.setIs24HourView(true)
+
+            var fecha = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
+            fecha.time = formato!!.parse(textView.text.toString())
+            datePicker2.updateDate(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), fecha.get(Calendar.DAY_OF_MONTH))
+            timePicker2.currentHour = fecha.get(Calendar.HOUR)
+            timePicker2.currentMinute = fecha.get(Calendar.MINUTE)
+
 
 
             vistaAlertDialog.findViewById<Button>(R.id.btn_dateTime).setOnClickListener {
