@@ -37,6 +37,7 @@ class Formulario : AppCompatActivity() {
         formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
         bundle = intent.extras
+
         if ( bundle!!.getInt("id") > 0){
 
             edt_nombre.setText(bundle!!.getString("nombre"))
@@ -189,10 +190,15 @@ class Formulario : AppCompatActivity() {
 
                             var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
 
-                            myIntent.putExtra("id", id)
-                            myIntent.setData(Uri.parse("myalarms://" + id))
-                            myIntent.putExtra("titulo", edt_nombre.text.toString().trim())
+                            myIntent.putExtra("id",id)
+                            myIntent.setData(Uri.parse("myalarms://"+ id))
+                            myIntent.putExtra("color", selector_color.selectedItem.toString())
+                            myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
                             myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                            myIntent.putExtra("inicio", edt_inicio.text.toString())
+                            myIntent.putExtra("fin", edt_fin.text.toString())
+                            myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
+                            myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
                             var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0)
                             var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                             val df: DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
@@ -230,8 +236,13 @@ class Formulario : AppCompatActivity() {
                             var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
                             myIntent.putExtra("id",id)
                             myIntent.setData(Uri.parse("myalarms://"+ id))
+                            myIntent.putExtra("color", selector_color.selectedItem.toString())
                             myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
                             myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                            myIntent.putExtra("inicio", edt_inicio.text.toString())
+                            myIntent.putExtra("fin", edt_fin.text.toString())
+                            myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
+                            myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
 
                             var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
                             var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -240,24 +251,17 @@ class Formulario : AppCompatActivity() {
                             var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
                             myIntent.putExtra("id",id)
                             myIntent.setData(Uri.parse("myalarms://"+ id))
+                            myIntent.putExtra("color", selector_color.selectedItem.toString())
                             myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
                             myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                            myIntent.putExtra("inicio", edt_inicio.text.toString())
+                            myIntent.putExtra("fin", edt_fin.text.toString())
+                            myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
+                            myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
 
                             var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
                             var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                             manager.cancel(pendingIntent)
-
-                            myIntent.setData(Uri.parse("myalarms://"+ id))
-                            myIntent.putExtra("id",id)
-                            myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
-                            myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-
-
-
-
-
-
-
 
                             val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
                             var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
@@ -284,8 +288,13 @@ class Formulario : AppCompatActivity() {
                     var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
                     myIntent.putExtra("id",id)
                     myIntent.setData(Uri.parse("myalarms://"+ id))
+                    myIntent.putExtra("color", selector_color.selectedItem.toString())
                     myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
                     myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                    myIntent.putExtra("inicio", edt_inicio.text.toString())
+                    myIntent.putExtra("fin", edt_fin.text.toString())
+                    myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
+                    myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
 
                     var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
                     var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
