@@ -69,40 +69,41 @@ class Formulario : AppCompatActivity() {
 
     private fun selectorFecha(textView: TextView){
 
-            var alertView = AlertDialog.Builder(this)
-            var vistaAlertDialog = View.inflate(this, R.layout.date_time_picker, null)
+        var alertView = AlertDialog.Builder(this)
+        var vistaAlertDialog = View.inflate(this, R.layout.date_time_picker, null)
 
-            alertView.setView(vistaAlertDialog)
-            val dialogo = alertView.show()
-
-
-            var datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
-            var timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
-
-            datePicker2.firstDayOfWeek = Calendar.MONDAY
-            timePicker2.setIs24HourView(true)
-
-            var fecha = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
-            fecha.time = formato!!.parse(textView.text.toString())
-            datePicker2.updateDate(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), fecha.get(Calendar.DAY_OF_MONTH))
-            timePicker2.currentHour = fecha.get(Calendar.HOUR)
-            timePicker2.currentMinute = fecha.get(Calendar.MINUTE)
+        alertView.setView(vistaAlertDialog)
 
 
 
-            vistaAlertDialog.findViewById<Button>(R.id.btn_dateTime).setOnClickListener {
-                var fecha = GregorianCalendar(datePicker2.year, datePicker2.month, datePicker2.dayOfMonth, timePicker2.hour, timePicker2.minute, 0)
-                var cadena = formato!!.format(fecha.time).toString()
+        var datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
+        var timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
 
-                textView.text = cadena
+        datePicker2.firstDayOfWeek = Calendar.MONDAY
 
-                if(formato!!.parse(edt_fin.text.toString()).time < formato!!.parse(edt_inicio.text.toString()).time){
-                    edt_fin.setText(edt_inicio.text.toString())
-                }
 
-                dialogo.dismiss()
+        var fecha = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
+        fecha.time = formato!!.parse(textView.text.toString())
+        datePicker2.updateDate(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), fecha.get(Calendar.DAY_OF_MONTH))
+        timePicker2.setIs24HourView(true)
+        timePicker2.currentHour = fecha.get(Calendar.HOUR_OF_DAY)
+        timePicker2.currentMinute = fecha.get(Calendar.MINUTE)
 
+        val dialogo = alertView.show()
+
+        vistaAlertDialog.findViewById<Button>(R.id.btn_dateTime).setOnClickListener {
+            var fecha = GregorianCalendar(datePicker2.year, datePicker2.month, datePicker2.dayOfMonth, timePicker2.hour, timePicker2.minute, 0)
+            var cadena = formato!!.format(fecha.time).toString()
+
+            textView.text = cadena
+
+            if(formato!!.parse(edt_fin.text.toString()).time < formato!!.parse(edt_inicio.text.toString()).time){
+                edt_fin.setText(edt_inicio.text.toString())
             }
+
+            dialogo.dismiss()
+
+        }
 
     }
 
@@ -184,19 +185,20 @@ class Formulario : AppCompatActivity() {
 
                     val id = dbHelper!!.agregarEvento(valores)
                     if (id > 0) {
+                        if (selector_alarma.selectedItem.toString() != "Sin alarma") {
 
-                        var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+                            var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
 
-                        myIntent.putExtra("id",id)
-                        myIntent.setData(Uri.parse("myalarms://"+ id))
-                        myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
-                        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-                        var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
-                        var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-                        var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
-                        manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
-
+                            myIntent.putExtra("id", id)
+                            myIntent.setData(Uri.parse("myalarms://" + id))
+                            myIntent.putExtra("titulo", edt_nombre.text.toString().trim())
+                            myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                            var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0)
+                            var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            val df: DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+                            var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
+                            manager.set(AlarmManager.RTC_WAKEUP, fechaHora.time, pendingIntent)
+                        }
 
                         finish()
                     } else {
@@ -224,29 +226,44 @@ class Formulario : AppCompatActivity() {
                     valores.put("descripcion", edt_descripcion.text.toString().trim())
 
                     if (dbHelper!!.actualizarEvento(valores) > 0) {
+                        if (selector_alarma.selectedItem.toString() == "Sin alarma") {
+                            var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+                            myIntent.putExtra("id",id)
+                            myIntent.setData(Uri.parse("myalarms://"+ id))
+                            myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
+                            myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
 
-                        var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
-                        myIntent.putExtra("id",id)
-                        myIntent.setData(Uri.parse("myalarms://"+ id))
-                        myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
-                        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+                            var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
+                            var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            manager.cancel(pendingIntent)
+                        }else{
+                            var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+                            myIntent.putExtra("id",id)
+                            myIntent.setData(Uri.parse("myalarms://"+ id))
+                            myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
+                            myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
 
-                        var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
-                        var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                        manager.cancel(pendingIntent)
+                            var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
+                            var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                            manager.cancel(pendingIntent)
 
-                        myIntent.putExtra("id",id)
-                        myIntent.setData(Uri.parse("myalarms://"+ id))
-                        myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
-                        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-
-
-                        val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-                        var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
-
-                        manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
+                            myIntent.setData(Uri.parse("myalarms://"+ id))
+                            myIntent.putExtra("id",id)
+                            myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
+                            myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
 
 
+
+
+
+
+
+
+                            val df : DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+                            var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
+
+                            manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
+                        }
                         finish()
                     } else {
                         Toast.makeText(this, "No se pudo editar el evento", Toast.LENGTH_LONG).show()
@@ -267,7 +284,7 @@ class Formulario : AppCompatActivity() {
                     var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
                     myIntent.putExtra("id",id)
                     myIntent.setData(Uri.parse("myalarms://"+ id))
-                    myIntent.putExtra("titulo",edt_nombre.text.toString().trim())
+                    myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
                     myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
 
                     var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)

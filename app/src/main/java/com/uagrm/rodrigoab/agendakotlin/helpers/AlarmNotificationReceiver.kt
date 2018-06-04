@@ -21,8 +21,9 @@ class AlarmNotificationReceiver() : BroadcastReceiver() {
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_check)
                 .setColorized(true)
-                .setContentTitle(intent.extras["titulo"].toString())
+                .setContentTitle(intent.extras["nombre"].toString())
                 .setContentText(intent.extras["lugar"].toString())
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setDefaults(Notification.DEFAULT_ALL)
                 //.setContentInfo("INFOO") es algo chiquitito q va debajo de la hora
 
