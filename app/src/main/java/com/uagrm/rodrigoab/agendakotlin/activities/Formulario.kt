@@ -86,6 +86,7 @@ class Formulario : AppCompatActivity() {
         var fecha = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
         fecha.time = formato!!.parse(textView.text.toString())
         datePicker2.updateDate(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), fecha.get(Calendar.DAY_OF_MONTH))
+
         timePicker2.setIs24HourView(true)
         timePicker2.currentHour = fecha.get(Calendar.HOUR_OF_DAY)
         timePicker2.currentMinute = fecha.get(Calendar.MINUTE)
@@ -305,6 +306,7 @@ class Formulario : AppCompatActivity() {
                     finish()
                 })
                 alertDialog.setNegativeButton("Cancelar", { dialogInterface: DialogInterface, i: Int -> })
+
                 alertDialog.show()
             }
 

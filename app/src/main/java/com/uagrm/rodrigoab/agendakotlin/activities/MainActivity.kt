@@ -31,16 +31,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         db = DBHelper(this)
-        val monthFormat = SimpleDateFormat("MMMM", Locale.getDefault())
 
         calendario = findViewById(R.id.compactcalendar_view) as CompactCalendarView
-        txt_mes.setText(monthFormat.format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
         setupCalendar()
-        cargarListaDeEventos(formato_dia!!.format(Date()).toString())
-
-
         btn_agregar.setOnClickListener {
 
             val intent = Intent(this, Formulario::class.java)
@@ -53,13 +47,14 @@ class MainActivity : AppCompatActivity() {
         // Eventos Calendario
         calendario!!.setListener(object : CompactCalendarView.CompactCalendarViewListener{
             override fun onDayClick(dateClicked: Date?) {
+
                 diaSeleccionado = formato_dia!!.format(dateClicked).toString()
                 diaSeleccionado2 = formato!!.format(dateClicked).toString()
-                cargarListaDeEventos(formato_dia!!.format(dateClicked).toString())
+                cargarListaDeEventos(diaSeleccionado!!)
             }
 
             override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-                txt_mes.setText(monthFormat.format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
+                txt_mes.setText(SimpleDateFormat("MMMM", Locale.getDefault()).format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
                 cargarEventosMes(calendario!!.firstDayOfCurrentMonth)
             }
         })
@@ -126,6 +121,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupCalendar(){
+        txt_mes.setText(SimpleDateFormat("MMMM", Locale.getDefault()).format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
         calendario!!.setUseThreeLetterAbbreviation(true)
         calendario!!.shouldSelectFirstDayOfMonthOnScroll(false)
         calendario!!.shouldDrawIndicatorsBelowSelectedDays(true)
@@ -135,6 +131,8 @@ class MainActivity : AppCompatActivity() {
 
         diaSeleccionado = formato_dia!!.format(Date()).toString()
         diaSeleccionado2 = formato!!.format(Date()).toString()
+
+        cargarListaDeEventos(formato_dia!!.format(Date()).toString())
     }
 
 
