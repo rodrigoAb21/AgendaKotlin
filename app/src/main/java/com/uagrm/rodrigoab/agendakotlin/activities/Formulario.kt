@@ -190,23 +190,8 @@ class Formulario : AppCompatActivity() {
                         if (selector_alarma.selectedItem.toString() != "Sin alarma") {
                             var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                             if(Date().time < fechaHora.time){
-                                var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
-
-                                myIntent.putExtra("id",id)
-                                myIntent.setData(Uri.parse("myalarms://"+ id))
-                                myIntent.putExtra("color", selector_color.selectedItem.toString())
-                                myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
-                                myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-                                myIntent.putExtra("inicio", edt_inicio.text.toString())
-                                myIntent.putExtra("fin", edt_fin.text.toString())
-                                myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
-                                myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
-
-                                var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0)
-                                var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                                manager.set(AlarmManager.RTC_WAKEUP, fechaHora.time, pendingIntent)
+                                metodoX(id.toInt(), fechaHora,"crear")
                             }
-
                         }
 
                         finish()
@@ -223,7 +208,7 @@ class Formulario : AppCompatActivity() {
 
             R.id.menu_btn_update -> {
                 if (edt_nombre.text.toString().trim() != ""){
-                    val id = bundle!!.getInt("id").toString()
+                    val id = bundle!!.getInt("id")
                     val valores = ContentValues()
                     valores.put("id", id)
                     valores.put("nombre", edt_nombre.text.toString().trim())
@@ -236,39 +221,11 @@ class Formulario : AppCompatActivity() {
 
                     if (dbHelper!!.actualizarEvento(valores) > 0) {
                         if (selector_alarma.selectedItem.toString() == "Sin alarma") {
-                            var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
-                            myIntent.putExtra("id",id)
-                            myIntent.setData(Uri.parse("myalarms://"+ id))
-                            myIntent.putExtra("color", selector_color.selectedItem.toString())
-                            myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
-                            myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-                            myIntent.putExtra("inicio", edt_inicio.text.toString())
-                            myIntent.putExtra("fin", edt_fin.text.toString())
-                            myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
-                            myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
-
-                            var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
-                            var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                            manager.cancel(pendingIntent)
+                            metodoX(id, null, "eliminar")
                         }else{
                             var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                             if(Date().time < fechaHora.time){
-                                var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
-                                myIntent.putExtra("id",id)
-                                myIntent.setData(Uri.parse("myalarms://"+ id))
-                                myIntent.putExtra("color", selector_color.selectedItem.toString())
-                                myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
-                                myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-                                myIntent.putExtra("inicio", edt_inicio.text.toString())
-                                myIntent.putExtra("fin", edt_fin.text.toString())
-                                myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
-                                myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
-
-                                var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
-                                var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                                manager.cancel(pendingIntent)
-
-                                manager.set(AlarmManager.RTC_WAKEUP,fechaHora.time,pendingIntent)
+                                metodoX(id, fechaHora, "actualizar")
                             }
                         }
                         finish()
@@ -287,23 +244,7 @@ class Formulario : AppCompatActivity() {
                 var alertDialog = AlertDialog.Builder(this)
                 alertDialog.setMessage("Quieres eliminar el evento?")
                 alertDialog.setPositiveButton("Eliminar", { dialogInterface: DialogInterface, i: Int ->
-
-                    var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
-                    myIntent.putExtra("id",id)
-                    myIntent.setData(Uri.parse("myalarms://"+ id))
-                    myIntent.putExtra("color", selector_color.selectedItem.toString())
-                    myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
-                    myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
-                    myIntent.putExtra("inicio", edt_inicio.text.toString())
-                    myIntent.putExtra("fin", edt_fin.text.toString())
-                    myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
-                    myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
-
-                    var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this,0,myIntent,0)
-                    var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                    manager.cancel(pendingIntent)
-
-
+                    metodoX(id, null, "eliminar")
                     dbHelper!!.eliminarEvento(id.toString())
                     finish()
                 })
@@ -315,6 +256,38 @@ class Formulario : AppCompatActivity() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    fun metodoX(id : Int, fechaHora : Date?, accion : String){
+        var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
+
+        myIntent.putExtra("id",id)
+        myIntent.setData(Uri.parse("myalarms://"+ id))
+        myIntent.putExtra("color", selector_color.selectedItem.toString())
+        myIntent.putExtra("nombre",edt_nombre.text.toString().trim())
+        myIntent.putExtra("lugar", edt_lugar.text.toString().trim())
+        myIntent.putExtra("inicio", edt_inicio.text.toString())
+        myIntent.putExtra("fin", edt_fin.text.toString())
+        myIntent.putExtra("alarma", selector_alarma.selectedItem.toString())
+        myIntent.putExtra("descripcion", edt_descripcion.text.toString().trim())
+
+        var pendingIntent: PendingIntent = PendingIntent.getBroadcast(this, 0, myIntent, 0)
+        var manager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        when(accion){
+            "crear" -> {
+                manager.set(AlarmManager.RTC_WAKEUP, fechaHora!!.time, pendingIntent)
+            }
+            "actualizar" -> {
+                manager.cancel(pendingIntent)
+                manager.set(AlarmManager.RTC_WAKEUP, fechaHora!!.time, pendingIntent)
+            }
+            "eliminar" -> {
+                manager.cancel(pendingIntent)
+            }
+        }
+
+
     }
 
 

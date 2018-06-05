@@ -103,7 +103,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
 
     fun eventosMes(mesAno : String) : ArrayList<Evento>{
         val eventos_mes = ArrayList<Evento>()
-        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $COL_INICIO LIKE \"%" + mesAno +"%\""
+        val selectQuery = "SELECT * FROM $TABLE_NAME WHERE $COL_INICIO LIKE \"%" + mesAno +"%\" ORDER BY $COL_INICIO"
         val cursor = db!!.rawQuery(selectQuery, null)
 
         if (cursor.moveToFirst()){
