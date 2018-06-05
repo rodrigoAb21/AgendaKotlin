@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
     private fun cargarEventosMes(date : Date){
         calendario!!.removeAllEvents()
         val formato_mes = SimpleDateFormat("MM-yyyy", Locale.getDefault())
-        val listaEventoMes = db!!.eventosMes(formato_mes.format(date))
+        val listaEventoMes = db!!.getEventos(formato_mes.format(date))
         for (evento: Evento in listaEventoMes) {
             calendario!!.addEvent(Event(getColor(evento.color!!),
                     SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun cargarListaDeEventos(dia : String){
-        listaEventos = db.eventosDia(dia!!)
+        listaEventos = db.getEventos(dia!!)
         val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
         list_eventos.adapter = adapter
     }

@@ -161,6 +161,7 @@ class Formulario : AppCompatActivity() {
         }
     }
 
+
     private fun selectorFecha(textView: TextView){
 
         var alertView = AlertDialog.Builder(this)
@@ -209,23 +210,22 @@ class Formulario : AppCompatActivity() {
         when(alarma){
             "10 min antes" -> {
                 fecha.add(Calendar.MINUTE, -10)
-                return formato!!.format(fecha.time).toString()
             }
             "30 min antes" -> {
                 fecha.add(Calendar.MINUTE, -30)
-                return formato!!.format(fecha.time).toString()
             }
             "1 hora antes" -> {
                 fecha.add(Calendar.HOUR, -1)
-                return formato!!.format(fecha.time).toString()
             }
             "1 dia antes" -> {
                 fecha.add(Calendar.DAY_OF_MONTH, -1)
-                return formato!!.format(fecha.time).toString()
+            }
+            "Sin alarma" -> {
+                return "Sin alarma"
             }
         }
 
-        return "Sin alarma"
+        return formato!!.format(fecha.time).toString()
 
     }
 
