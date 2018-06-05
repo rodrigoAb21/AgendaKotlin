@@ -33,7 +33,7 @@ class CRUD_Evento(context: Context) : crudInterface{
     override fun getAllItems(): ArrayList<Evento> {
         val eventos_dia = ArrayList<Evento>()
         val db = dbHelper.writableDatabase
-        val selectQuery = "SELECT * FROM tabla"
+        val selectQuery = "SELECT * FROM $tabla"
         val cursor = db.rawQuery(selectQuery, null)
 
         if (cursor.moveToFirst()){

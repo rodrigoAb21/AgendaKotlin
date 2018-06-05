@@ -12,6 +12,7 @@ import com.uagrm.rodrigoab.agendakotlin.R
 import com.uagrm.rodrigoab.agendakotlin.adapters.AdaptadorEvento
 import com.uagrm.rodrigoab.agendakotlin.helpers.CRUD_Evento
 import com.uagrm.rodrigoab.agendakotlin.interfaces.crudInterface
+import com.uagrm.rodrigoab.agendakotlin.metodosComplementarios.mMain
 import com.uagrm.rodrigoab.agendakotlin.models.Evento
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,6 +23,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     internal var listaEventos : List<Evento> = ArrayList<Evento>()
+    val x = mMain()
     var calendario : CompactCalendarView ?= null
     var formato_dia : SimpleDateFormat ?= null
     var formato : SimpleDateFormat ?= null
@@ -112,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         val formato_mes = SimpleDateFormat("MM-yyyy", Locale.getDefault())
         val listaEventoMes = crudInterface!!.getItemsByDate(formato_mes.format(date))
         for (evento: Evento in listaEventoMes) {
-            calendario!!.addEvent(Event(getColor(evento.color!!),
+            calendario!!.addEvent(Event(x.getColor(evento.color!!),
                     SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
                             .parse(evento.inicio).time))
         }
@@ -123,26 +125,6 @@ class MainActivity : AppCompatActivity() {
         val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
         list_eventos.adapter = adapter
     }
-
-    private fun getColor(color : String) : Int{
-        when(color){
-            "Azul" -> {
-                return Color.rgb(24, 93, 133)
-            }
-            "Rojo" -> {
-                return Color.rgb(199, 0, 57)
-            }
-            "Verde" -> {
-                return Color.rgb(0, 128, 0)
-            }
-            "Amarillo" -> {
-                return Color.rgb(255, 193, 7)
-            }
-        }
-        return Color.GRAY
-    }
-
-
 
 
 

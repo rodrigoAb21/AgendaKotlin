@@ -17,12 +17,14 @@ import android.widget.*
 import com.uagrm.rodrigoab.agendakotlin.R
 import com.uagrm.rodrigoab.agendakotlin.helpers.AlarmNotificationReceiver
 import com.uagrm.rodrigoab.agendakotlin.helpers.CRUD_Evento
+import com.uagrm.rodrigoab.agendakotlin.metodosComplementarios.mFormulario
 import kotlinx.android.synthetic.main.activity_formulario.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Formulario : AppCompatActivity() {
 
+    val x = mFormulario()
     var bundle : Bundle ?= null
     var formato : SimpleDateFormat ?= null
 
@@ -69,7 +71,7 @@ class Formulario : AppCompatActivity() {
                     val id = crudInterface!!.agregar(valores)
                     if (id > 0) {
                         if (selector_alarma.selectedItem.toString() != "Sin alarma") {
-                            var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
+                            var fechaHora = df.parse(x.getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                             if(Date().time < fechaHora.time){
                                 metodoX(id.toInt(), fechaHora,"crear")
                             }
@@ -98,7 +100,7 @@ class Formulario : AppCompatActivity() {
                         if (selector_alarma.selectedItem.toString() == "Sin alarma") {
                             metodoX(id, null, "eliminar")
                         }else{
-                            var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
+                            var fechaHora = df.parse(x.getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
                             if(Date().time < fechaHora.time){
                                 metodoX(id, fechaHora, "actualizar")
                             }
@@ -148,11 +150,11 @@ class Formulario : AppCompatActivity() {
         if ( bundle!!.getInt("id") > 0){
 
             edt_nombre.setText(bundle!!.getString("nombre"))
-            selector_color.setSelection(getPosicion(bundle!!.getString("color")))
+            selector_color.setSelection(x.getPosicion(bundle!!.getString("color")))
             edt_lugar.setText(bundle!!.getString("lugar"))
             edt_inicio.setText(bundle!!.getString("inicio"))
             edt_fin.setText(bundle!!.getString("fin"))
-            selector_alarma.setSelection(getPosicionAlarma(bundle!!.getString("alarma")))
+            selector_alarma.setSelection(x.getPosicionAlarma(bundle!!.getString("alarma")))
             edt_descripcion.setText(bundle!!.getString("descripcion"))
 
         } else {
@@ -202,51 +204,6 @@ class Formulario : AppCompatActivity() {
 
         }
 
-    }
-
-    private fun getAlarma(inicio : String, alarma : String) : String{
-        var fecha = Calendar.getInstance(TimeZone.getDefault() ,Locale.getDefault())
-        fecha.time = formato!!.parse(inicio)
-        when(alarma){
-            "10 min antes" -> {
-                fecha.add(Calendar.MINUTE, -10)
-            }
-            "30 min antes" -> {
-                fecha.add(Calendar.MINUTE, -30)
-            }
-            "1 hora antes" -> {
-                fecha.add(Calendar.HOUR, -1)
-            }
-            "1 dia antes" -> {
-                fecha.add(Calendar.DAY_OF_MONTH, -1)
-            }
-            "Sin alarma" -> {
-                return "Sin alarma"
-            }
-        }
-
-        return formato!!.format(fecha.time).toString()
-
-    }
-
-    private fun getPosicion(color : String): Int{
-        when(color) {
-            "Azul"-> return 0
-            "Rojo"-> return 1
-            "Verde"-> return 2
-            "Amarillo"-> return 3
-        }
-        return 4
-    }
-
-    private fun getPosicionAlarma(alarma : String): Int{
-        when(alarma) {
-            "Sin alarma"-> return 0
-            "10 min antes"-> return 1
-            "30 min antes"-> return 2
-            "1 hora antes"-> return 3
-        }
-        return 4
     }
 
     private fun metodoX(id : Int, fechaHora : Date?, accion : String){
