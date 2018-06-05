@@ -18,7 +18,6 @@ import com.uagrm.rodrigoab.agendakotlin.R
 import com.uagrm.rodrigoab.agendakotlin.helpers.AlarmNotificationReceiver
 import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
 import kotlinx.android.synthetic.main.activity_formulario.*
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,28 +29,8 @@ class Formulario : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_formulario)
-        val selectorAdapter = ArrayAdapter.createFromResource(this, R.array.items_colores, android.R.layout.simple_spinner_dropdown_item)
-        val selectorAlarmaAdapter = ArrayAdapter.createFromResource(this, R.array.items_alarma, android.R.layout.simple_spinner_dropdown_item)
-        selector_color.adapter = selectorAdapter
-        selector_alarma.adapter = selectorAlarmaAdapter
-        formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
 
-        bundle = intent.extras
-
-        if ( bundle!!.getInt("id") > 0){
-
-            edt_nombre.setText(bundle!!.getString("nombre"))
-            selector_color.setSelection(getPosicion(bundle!!.getString("color")))
-            edt_lugar.setText(bundle!!.getString("lugar"))
-            edt_inicio.setText(bundle!!.getString("inicio"))
-            edt_fin.setText(bundle!!.getString("fin"))
-            selector_alarma.setSelection(getPosicionAlarma(bundle!!.getString("alarma")))
-            edt_descripcion.setText(bundle!!.getString("descripcion"))
-
-        } else {
-            edt_inicio.setText(bundle!!.getString("inicio"))
-            edt_fin.setText(bundle!!.getString("inicio"))
-        }
+        setupFormulario()
 
         edt_inicio.setOnClickListener {
             selectorFecha(edt_inicio)
@@ -64,98 +43,6 @@ class Formulario : AppCompatActivity() {
 
     }
 
-
-
-
-
-    private fun selectorFecha(textView: TextView){
-
-        var alertView = AlertDialog.Builder(this)
-        var vistaAlertDialog = View.inflate(this, R.layout.date_time_picker, null)
-
-        alertView.setView(vistaAlertDialog)
-
-
-
-        var datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
-        var timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
-
-        datePicker2.firstDayOfWeek = Calendar.MONDAY
-
-
-        var fecha = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
-        fecha.time = formato!!.parse(textView.text.toString())
-        datePicker2.updateDate(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH), fecha.get(Calendar.DAY_OF_MONTH))
-
-        timePicker2.setIs24HourView(true)
-        timePicker2.currentHour = fecha.get(Calendar.HOUR_OF_DAY)
-        timePicker2.currentMinute = fecha.get(Calendar.MINUTE)
-
-        val dialogo = alertView.show()
-
-        vistaAlertDialog.findViewById<Button>(R.id.btn_dateTime).setOnClickListener {
-            var fecha = GregorianCalendar(datePicker2.year, datePicker2.month, datePicker2.dayOfMonth, timePicker2.hour, timePicker2.minute, 0)
-            var cadena = formato!!.format(fecha.time).toString()
-
-            textView.text = cadena
-
-            if(formato!!.parse(edt_fin.text.toString()).time < formato!!.parse(edt_inicio.text.toString()).time){
-                edt_fin.setText(edt_inicio.text.toString())
-            }
-
-            dialogo.dismiss()
-
-        }
-
-    }
-
-
-    private fun getAlarma(inicio : String, alarma : String) : String{
-        var fecha = Calendar.getInstance(TimeZone.getDefault() ,Locale.getDefault())
-        fecha.time = formato!!.parse(inicio)
-        when(alarma){
-            "10 min antes" -> {
-                fecha.add(Calendar.MINUTE, -10)
-                return formato!!.format(fecha.time).toString()
-            }
-            "30 min antes" -> {
-                fecha.add(Calendar.MINUTE, -30)
-                return formato!!.format(fecha.time).toString()
-            }
-            "1 hora antes" -> {
-                fecha.add(Calendar.HOUR, -1)
-                return formato!!.format(fecha.time).toString()
-            }
-            "1 dia antes" -> {
-                fecha.add(Calendar.DAY_OF_MONTH, -1)
-                return formato!!.format(fecha.time).toString()
-            }
-        }
-
-        return "Sin alarma"
-
-    }
-
-
-    private fun getPosicion(color : String): Int{
-        when(color) {
-            "Azul"-> return 0
-            "Rojo"-> return 1
-            "Verde"-> return 2
-            "Amarillo"-> return 3
-        }
-        return 4
-    }
-
-    private fun getPosicionAlarma(alarma : String): Int{
-        when(alarma) {
-            "Sin alarma"-> return 0
-            "10 min antes"-> return 1
-            "30 min antes"-> return 2
-            "1 hora antes"-> return 3
-        }
-        return 4
-    }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -171,19 +58,13 @@ class Formulario : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val dbHelper = DBHelper(this)
-        val df: DateFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        val df = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         when (item!!.itemId) {
             R.id.menu_btn_add -> {
 
                 if(edt_nombre.text.toString().trim() != ""){
                     val valores = ContentValues()
-                    valores.put("nombre", edt_nombre.text.toString().trim())
-                    valores.put("color", selector_color.selectedItem.toString())
-                    valores.put("lugar", edt_lugar.text.toString().trim())
-                    valores.put("inicio", edt_inicio.text.toString())
-                    valores.put("fin", edt_fin.text.toString())
-                    valores.put("alarma", selector_alarma.selectedItem.toString())
-                    valores.put("descripcion", edt_descripcion.text.toString().trim())
+                    cargarContent(valores)
 
                     val id = dbHelper!!.agregarEvento(valores)
                     if (id > 0) {
@@ -211,13 +92,7 @@ class Formulario : AppCompatActivity() {
                     val id = bundle!!.getInt("id")
                     val valores = ContentValues()
                     valores.put("id", id)
-                    valores.put("nombre", edt_nombre.text.toString().trim())
-                    valores.put("color", selector_color.selectedItem.toString())
-                    valores.put("lugar", edt_lugar.text.toString().trim())
-                    valores.put("inicio", edt_inicio.text.toString())
-                    valores.put("fin", edt_fin.text.toString())
-                    valores.put("alarma", selector_alarma.selectedItem.toString())
-                    valores.put("descripcion", edt_descripcion.text.toString().trim())
+                    cargarContent(valores)
 
                     if (dbHelper!!.actualizarEvento(valores) > 0) {
                         if (selector_alarma.selectedItem.toString() == "Sin alarma") {
@@ -258,7 +133,123 @@ class Formulario : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun metodoX(id : Int, fechaHora : Date?, accion : String){
+    // algunos metodos ;)
+
+    private fun setupFormulario(){
+        val selectorAdapter = ArrayAdapter.createFromResource(this,
+                R.array.items_colores, android.R.layout.simple_spinner_dropdown_item)
+        val selectorAlarmaAdapter = ArrayAdapter.createFromResource(this,
+                R.array.items_alarma, android.R.layout.simple_spinner_dropdown_item)
+        selector_color.adapter = selectorAdapter
+        selector_alarma.adapter = selectorAlarmaAdapter
+        formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        bundle = intent.extras
+
+        if ( bundle!!.getInt("id") > 0){
+
+            edt_nombre.setText(bundle!!.getString("nombre"))
+            selector_color.setSelection(getPosicion(bundle!!.getString("color")))
+            edt_lugar.setText(bundle!!.getString("lugar"))
+            edt_inicio.setText(bundle!!.getString("inicio"))
+            edt_fin.setText(bundle!!.getString("fin"))
+            selector_alarma.setSelection(getPosicionAlarma(bundle!!.getString("alarma")))
+            edt_descripcion.setText(bundle!!.getString("descripcion"))
+
+        } else {
+            edt_inicio.setText(bundle!!.getString("inicio"))
+            edt_fin.setText(bundle!!.getString("inicio"))
+        }
+    }
+
+    private fun selectorFecha(textView: TextView){
+
+        var alertView = AlertDialog.Builder(this)
+        var vistaAlertDialog = View.inflate(this, R.layout.date_time_picker, null)
+
+        alertView.setView(vistaAlertDialog)
+
+        var datePicker2 = vistaAlertDialog.findViewById<DatePicker>(R.id.datepicker)
+        var timePicker2 = vistaAlertDialog.findViewById<TimePicker>(R.id.timepicker)
+
+        datePicker2.firstDayOfWeek = Calendar.MONDAY
+
+
+        var fecha = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault())
+        fecha.time = formato!!.parse(textView.text.toString())
+        datePicker2.updateDate(fecha.get(Calendar.YEAR), fecha.get(Calendar.MONTH),
+                fecha.get(Calendar.DAY_OF_MONTH))
+
+        timePicker2.setIs24HourView(true)
+        timePicker2.currentHour = fecha.get(Calendar.HOUR_OF_DAY)
+        timePicker2.currentMinute = fecha.get(Calendar.MINUTE)
+
+        val dialogo = alertView.show()
+
+        vistaAlertDialog.findViewById<Button>(R.id.btn_dateTime).setOnClickListener {
+            var fecha = GregorianCalendar(datePicker2.year, datePicker2.month,
+                    datePicker2.dayOfMonth, timePicker2.hour, timePicker2.minute, 0)
+            var cadena = formato!!.format(fecha.time).toString()
+
+            textView.text = cadena
+
+            if(formato!!.parse(edt_fin.text.toString()).time <
+                    formato!!.parse(edt_inicio.text.toString()).time){
+                edt_fin.setText(edt_inicio.text.toString())
+            }
+
+            dialogo.dismiss()
+
+        }
+
+    }
+
+    private fun getAlarma(inicio : String, alarma : String) : String{
+        var fecha = Calendar.getInstance(TimeZone.getDefault() ,Locale.getDefault())
+        fecha.time = formato!!.parse(inicio)
+        when(alarma){
+            "10 min antes" -> {
+                fecha.add(Calendar.MINUTE, -10)
+                return formato!!.format(fecha.time).toString()
+            }
+            "30 min antes" -> {
+                fecha.add(Calendar.MINUTE, -30)
+                return formato!!.format(fecha.time).toString()
+            }
+            "1 hora antes" -> {
+                fecha.add(Calendar.HOUR, -1)
+                return formato!!.format(fecha.time).toString()
+            }
+            "1 dia antes" -> {
+                fecha.add(Calendar.DAY_OF_MONTH, -1)
+                return formato!!.format(fecha.time).toString()
+            }
+        }
+
+        return "Sin alarma"
+
+    }
+
+    private fun getPosicion(color : String): Int{
+        when(color) {
+            "Azul"-> return 0
+            "Rojo"-> return 1
+            "Verde"-> return 2
+            "Amarillo"-> return 3
+        }
+        return 4
+    }
+
+    private fun getPosicionAlarma(alarma : String): Int{
+        when(alarma) {
+            "Sin alarma"-> return 0
+            "10 min antes"-> return 1
+            "30 min antes"-> return 2
+            "1 hora antes"-> return 3
+        }
+        return 4
+    }
+
+    private fun metodoX(id : Int, fechaHora : Date?, accion : String){
         var myIntent = Intent(this, AlarmNotificationReceiver().javaClass)
 
         myIntent.putExtra("id",id)
@@ -290,7 +281,14 @@ class Formulario : AppCompatActivity() {
 
     }
 
-
-
+    private fun cargarContent(valores : ContentValues){
+        valores.put("nombre", edt_nombre.text.toString().trim())
+        valores.put("color", selector_color.selectedItem.toString())
+        valores.put("lugar", edt_lugar.text.toString().trim())
+        valores.put("inicio", edt_inicio.text.toString())
+        valores.put("fin", edt_fin.text.toString())
+        valores.put("alarma", selector_alarma.selectedItem.toString())
+        valores.put("descripcion", edt_descripcion.text.toString().trim())
+    }
 
 }

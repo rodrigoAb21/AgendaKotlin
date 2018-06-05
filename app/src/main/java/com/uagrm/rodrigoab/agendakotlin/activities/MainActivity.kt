@@ -31,11 +31,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         db = DBHelper(this)
-
-
         calendario = findViewById(R.id.compactcalendar_view) as CompactCalendarView
         setupCalendar()
+
         btn_agregar.setOnClickListener {
 
             val intent = Intent(this, Formulario::class.java)
@@ -44,22 +44,6 @@ class MainActivity : AppCompatActivity() {
             this.startActivity(intent)
 
         }
-
-        // Eventos Calendario
-        calendario!!.setListener(object : CompactCalendarView.CompactCalendarViewListener{
-            override fun onDayClick(dateClicked: Date?) {
-
-                diaSeleccionado = formato_dia!!.format(dateClicked).toString()
-                diaSeleccionado2 = formato!!.format(dateClicked).toString()
-                cargarListaDeEventos(diaSeleccionado!!)
-            }
-
-            override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-                txt_mes.setText(SimpleDateFormat("MMMM", Locale.getDefault()).format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
-                cargarEventosMes(calendario!!.firstDayOfCurrentMonth)
-            }
-        })
-
 
     }
 
@@ -86,14 +70,48 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+
     // algunos metodos ;)
+
+    private fun setupCalendar(){
+        txt_mes.setText(SimpleDateFormat("MMMM", Locale.getDefault())
+                .format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
+        calendario!!.setUseThreeLetterAbbreviation(true)
+        calendario!!.shouldSelectFirstDayOfMonthOnScroll(false)
+        calendario!!.shouldDrawIndicatorsBelowSelectedDays(true)
+
+        formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+        formato_dia =  SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+
+        diaSeleccionado = formato_dia!!.format(Date()).toString()
+        diaSeleccionado2 = formato!!.format(Date()).toString()
+
+        cargarListaDeEventos(formato_dia!!.format(Date()).toString())
+
+        calendario!!.setListener(object : CompactCalendarView.CompactCalendarViewListener{
+            override fun onDayClick(dateClicked: Date?) {
+
+                diaSeleccionado = formato_dia!!.format(dateClicked).toString()
+                diaSeleccionado2 = formato!!.format(dateClicked).toString()
+                cargarListaDeEventos(diaSeleccionado!!)
+            }
+
+            override fun onMonthScroll(firstDayOfNewMonth: Date?) {
+                txt_mes.setText(SimpleDateFormat("MMMM", Locale.getDefault())
+                        .format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
+                cargarEventosMes(calendario!!.firstDayOfCurrentMonth)
+            }
+        })
+    }
 
     private fun cargarEventosMes(date : Date){
         calendario!!.removeAllEvents()
         val formato_mes = SimpleDateFormat("MM-yyyy", Locale.getDefault())
         val listaEventoMes = db!!.eventosMes(formato_mes.format(date))
         for (evento: Evento in listaEventoMes) {
-            calendario!!.addEvent(Event(getColor(evento.color!!), SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio).time))
+            calendario!!.addEvent(Event(getColor(evento.color!!),
+                    SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
+                            .parse(evento.inicio).time))
         }
     }
 
@@ -121,20 +139,7 @@ class MainActivity : AppCompatActivity() {
         return Color.GRAY
     }
 
-    private fun setupCalendar(){
-        txt_mes.setText(SimpleDateFormat("MMMM", Locale.getDefault()).format(calendario!!.firstDayOfCurrentMonth).toUpperCase())
-        calendario!!.setUseThreeLetterAbbreviation(true)
-        calendario!!.shouldSelectFirstDayOfMonthOnScroll(false)
-        calendario!!.shouldDrawIndicatorsBelowSelectedDays(true)
 
-        formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
-        formato_dia =  SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
-
-        diaSeleccionado = formato_dia!!.format(Date()).toString()
-        diaSeleccionado2 = formato!!.format(Date()).toString()
-
-        cargarListaDeEventos(formato_dia!!.format(Date()).toString())
-    }
 
 
 
