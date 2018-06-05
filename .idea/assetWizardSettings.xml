@@ -35,7 +35,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_description_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_check_circle_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -47,7 +47,8 @@
                                     <map>
                                       <entry key="backgroundColor" value="787878" />
                                       <entry key="iconShape" value="NONE" />
-                                      <entry key="outputName" value="ic_descripcion3" />
+                                      <entry key="imageAsset" value="D:\icons8-schedule-96.png" />
+                                      <entry key="outputName" value="ico_color" />
                                     </map>
                                   </option>
                                 </PersistentState>

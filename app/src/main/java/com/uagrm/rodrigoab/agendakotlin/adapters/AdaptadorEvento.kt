@@ -3,6 +3,7 @@ package com.uagrm.rodrigoab.agendakotlin.adapters
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,8 @@ import com.uagrm.rodrigoab.agendakotlin.models.Evento
 import com.uagrm.rodrigoab.agendakotlin.R
 import com.uagrm.rodrigoab.agendakotlin.activities.Formulario
 import kotlinx.android.synthetic.main.row_layout.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AdaptadorEvento(internal var activity: Activity, internal var listaDeEventos: List<Evento>) :BaseAdapter() {
 
@@ -24,9 +27,15 @@ class AdaptadorEvento(internal var activity: Activity, internal var listaDeEvent
         val evento = listaDeEventos[p0]
         val rowView : View
 
+        val formatoHora = SimpleDateFormat("HH:mm", Locale.getDefault())
+        var inicio : Date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.inicio)
+        var fin : Date = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault()).parse(evento.fin)
+
         rowView = inflater.inflate(R.layout.row_layout, null)
         rowView.txt_titulo.setText(evento.nombre)
-        rowView.txt_direccion.setText(evento.lugar)
+        rowView.txt_inicio.setText(formatoHora.format(inicio))
+        rowView.txt_fin.setText(formatoHora.format(fin))
+        rowView.color_evento.setColorFilter(getColor(evento.color!!))
 
         rowView.setOnClickListener {
             val intent = Intent(activity, Formulario::class.java)
@@ -56,6 +65,24 @@ class AdaptadorEvento(internal var activity: Activity, internal var listaDeEvent
 
     override fun getCount(): Int {
         return listaDeEventos.size
+    }
+
+    private fun getColor(color : String) : Int{
+        when(color){
+            "Azul" -> {
+                return Color.rgb(24, 93, 133)
+            }
+            "Rojo" -> {
+                return Color.rgb(199, 0, 57)
+            }
+            "Verde" -> {
+                return Color.rgb(0, 128, 0)
+            }
+            "Amarillo" -> {
+                return Color.rgb(255, 193, 7)
+            }
+        }
+        return Color.GRAY
     }
 
 

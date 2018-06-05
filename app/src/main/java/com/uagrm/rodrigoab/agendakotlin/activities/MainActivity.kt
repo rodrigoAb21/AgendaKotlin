@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         db = DBHelper(this)
 
+
         calendario = findViewById(R.id.compactcalendar_view) as CompactCalendarView
         setupCalendar()
         btn_agregar.setOnClickListener {

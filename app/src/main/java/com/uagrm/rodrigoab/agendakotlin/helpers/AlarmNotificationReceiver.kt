@@ -45,7 +45,7 @@ class AlarmNotificationReceiver() : BroadcastReceiver() {
 
         builder1.setAutoCancel(true)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.mipmap.ic_check)
+                .setSmallIcon(R.mipmap.icono_logo)
                 .setColorized(true)
                 .setContentTitle(intent.extras["nombre"].toString())
                 .setContentText(intent.extras["lugar"].toString())
