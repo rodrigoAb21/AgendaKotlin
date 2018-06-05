@@ -10,7 +10,8 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
 import com.uagrm.rodrigoab.agendakotlin.R
 import com.uagrm.rodrigoab.agendakotlin.adapters.AdaptadorEvento
-import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
+import com.uagrm.rodrigoab.agendakotlin.helpers.CRUD_Evento
+import com.uagrm.rodrigoab.agendakotlin.interfaces.crudInterface
 import com.uagrm.rodrigoab.agendakotlin.models.Evento
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -20,19 +21,21 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    internal lateinit var db : DBHelper
     internal var listaEventos : List<Evento> = ArrayList<Evento>()
     var calendario : CompactCalendarView ?= null
     var formato_dia : SimpleDateFormat ?= null
     var formato : SimpleDateFormat ?= null
     var diaSeleccionado : String ?= null
     var diaSeleccionado2 : String ?= null
+    var crudInterface : crudInterface ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        db = DBHelper(this)
+
+
+        crudInterface = CRUD_Evento(this)
         calendario = findViewById(R.id.compactcalendar_view) as CompactCalendarView
         setupCalendar()
 
@@ -50,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        db = DBHelper(this)
+        crudInterface = CRUD_Evento(this)
         cargarEventosMes(calendario!!.firstDayOfCurrentMonth)
         cargarListaDeEventos(diaSeleccionado!!)
     }
@@ -107,7 +110,7 @@ class MainActivity : AppCompatActivity() {
     private fun cargarEventosMes(date : Date){
         calendario!!.removeAllEvents()
         val formato_mes = SimpleDateFormat("MM-yyyy", Locale.getDefault())
-        val listaEventoMes = db!!.getEventos(formato_mes.format(date))
+        val listaEventoMes = crudInterface!!.getItemsByDate(formato_mes.format(date))
         for (evento: Evento in listaEventoMes) {
             calendario!!.addEvent(Event(getColor(evento.color!!),
                     SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
@@ -116,7 +119,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun cargarListaDeEventos(dia : String){
-        listaEventos = db.getEventos(dia!!)
+        listaEventos = crudInterface!!.getItemsByDate(dia)
         val adapter = AdaptadorEvento(this@MainActivity, listaEventos)
         list_eventos.adapter = adapter
     }

@@ -16,7 +16,7 @@ import android.view.View
 import android.widget.*
 import com.uagrm.rodrigoab.agendakotlin.R
 import com.uagrm.rodrigoab.agendakotlin.helpers.AlarmNotificationReceiver
-import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
+import com.uagrm.rodrigoab.agendakotlin.helpers.CRUD_Evento
 import kotlinx.android.synthetic.main.activity_formulario.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,7 +57,7 @@ class Formulario : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val dbHelper = DBHelper(this)
+        var crudInterface = CRUD_Evento(this)
         val df = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         when (item!!.itemId) {
             R.id.menu_btn_add -> {
@@ -66,7 +66,7 @@ class Formulario : AppCompatActivity() {
                     val valores = ContentValues()
                     cargarContent(valores)
 
-                    val id = dbHelper!!.agregarEvento(valores)
+                    val id = crudInterface!!.agregar(valores)
                     if (id > 0) {
                         if (selector_alarma.selectedItem.toString() != "Sin alarma") {
                             var fechaHora = df.parse(getAlarma(edt_inicio.text.toString(), selector_alarma.selectedItem.toString()))
@@ -94,7 +94,7 @@ class Formulario : AppCompatActivity() {
                     valores.put("id", id)
                     cargarContent(valores)
 
-                    if (dbHelper!!.actualizarEvento(valores) > 0) {
+                    if (crudInterface!!.actualizar(valores) > 0) {
                         if (selector_alarma.selectedItem.toString() == "Sin alarma") {
                             metodoX(id, null, "eliminar")
                         }else{
@@ -120,7 +120,7 @@ class Formulario : AppCompatActivity() {
                 alertDialog.setMessage("Quieres eliminar el evento?")
                 alertDialog.setPositiveButton("Eliminar", { dialogInterface: DialogInterface, i: Int ->
                     metodoX(id, null, "eliminar")
-                    dbHelper!!.eliminarEvento(id.toString())
+                    crudInterface!!.eliminar(id.toString())
                     finish()
                 })
                 alertDialog.setNegativeButton("Cancelar", { dialogInterface: DialogInterface, i: Int -> })

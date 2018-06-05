@@ -2,29 +2,29 @@ package com.uagrm.rodrigoab.agendakotlin.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import com.github.ik024.calendar_lib.custom.YearView
 import com.github.ik024.calendar_lib.listeners.YearViewClickListeners
 import com.uagrm.rodrigoab.agendakotlin.R
-import com.uagrm.rodrigoab.agendakotlin.helpers.DBHelper
+import com.uagrm.rodrigoab.agendakotlin.helpers.CRUD_Evento
+import com.uagrm.rodrigoab.agendakotlin.interfaces.crudInterface
 import com.uagrm.rodrigoab.agendakotlin.models.Evento
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 class VistaAnual : AppCompatActivity(), YearViewClickListeners {
-    internal lateinit var db : DBHelper
+    var crudInterface : crudInterface?= null
     internal var listaEventos : List<Evento> = ArrayList<Evento>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_vista_anual)
 
-        db = DBHelper(this)
+        crudInterface = CRUD_Evento(this)
         var calendario = findViewById(R.id.year_view) as YearView
         calendario.registerYearViewClickListener(this)
 
-        listaEventos = db.all_eventos
+        listaEventos = crudInterface!!.getAllItems()
         var listaDate = ArrayList<Date>()
         val formato = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault())
         var date = Date()
