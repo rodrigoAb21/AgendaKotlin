@@ -46,6 +46,6 @@ class VistaAnual : AppCompatActivity(), YearViewClickListeners {
 
 
     override fun dateClicked(year: Int, month: Int, day: Int) {
-        Toast.makeText(this, "year: "+year+";\nmonth: "+month+";\nday: "+day, Toast.LENGTH_LONG).show()
+        //Toast.makeText(this, "year: "+year+";\nmonth: "+month+";\nday: "+day, Toast.LENGTH_LONG).show()
     }
 }
